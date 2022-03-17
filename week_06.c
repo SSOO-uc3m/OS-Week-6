@@ -48,6 +48,12 @@ bool endTime = false;
 
 // print time passed
 
+/* ##############################*/
+/*                               */
+/* problem05 auxiliary functions */
+/*                               */
+/* ##############################*/
+
 #define ALARM_TIME 3
 
 // add function to capture the signal SIGALRM
