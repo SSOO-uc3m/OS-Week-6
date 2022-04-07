@@ -10,67 +10,17 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-/* ##############################*/
-/*                               */
-/* problem01 auxiliary functions */
-/*                               */
-/* ##############################*/
-
-void receivedSignal(int s) { printf("received signal %d\n", s); }
 
 /* ##############################*/
 /*                               */
-/* problem02 auxiliary functions */
+/* problem01                     */
 /*                               */
 /* ##############################*/
 
-void capturar_senyal(int senyal) {
-  printf("Error: illegal memory usage\n");
-  signal(SIGILL, SIG_DFL);
-}
 
-// add function to capture the signal SIGSEGV
-
-// execute de the dafault action of SIGSEGV
-
-/* ##############################*/
-/*                               */
-/* problem03 auxiliary functions */
-/*                               */
-/* ##############################*/
-
-// add function to capture the signal SIGUSR1
-
-// add function to capture the signal SIGCHLD
-void childDeath(int s) { printf("Child has died\n"); }
-
-/* ##############################*/
-/*                               */
-/* problem04 auxiliary functions */
-/*                               */
-/* ##############################*/
-
-const int TIME = 3;
-const int nMax = 10;
-const int nMin = 1;
-
-bool endTime = false;
-
-// add function to capture the signal SIGALRM
-
-// endTime flag put to true
-
-// print time passed
-
-/* ##############################*/
-/*                               */
-/* problem05 auxiliary functions */
-/*                               */
-/* ##############################*/
-
-#define ALARM_TIME 3
-
-// add function to capture the signal SIGALRM
+void receivedSignal(int s) { 
+  printf("received signal %d\n", s); 
+  }
 
 int exercise01() {
   int pid;
@@ -118,6 +68,18 @@ int exercise01() {
   }
 }
 
+/* ##############################*/
+/*                               */
+/* problem02                     */
+/*                               */
+/* ##############################*/
+
+
+void capturar_senyal(int senyal) {
+  printf("Error: illegal memory usage\n");
+  signal(SIGILL, SIG_DFL);
+}
+
 int exercise02() {
   int *p;
 
@@ -135,6 +97,16 @@ int exercise02() {
          "memory\n");
   *p = 5;
 }
+
+/* ##############################*/
+/*                               */
+/* problem03                     */
+/*                               */
+/* ##############################*/
+
+void childDeath(int s) { 
+  printf("Child has died\n"); 
+  }
 
 int exercise03() {
 
@@ -177,37 +149,73 @@ int exercise03() {
   }
 }
 
-int exercise04() {
-  int n;
+const int TIME = 3;
+const int nMax = 10;
+const int nMin = 1;
 
+bool endTime = false;
+
+void alarmGoesOff (int s){
+	  printf ("The alarm signal %d has arrived: \n",s);
+	  endTime=1;
+}
+
+int exercise04() { 
+
+
+  int n;   
+  
   // create a mask of signals to block during the handler
-
+  struct sigaction sa;
+	sa.sa_handler = alarmGoesOff;
+	sa.sa_flags=0;
   // create an empty set of signals
-
+	sigemptyset (&(sa.sa_mask));
   // set ALARM for TIME seconds
+	sigaction (SIGALRM, &sa, NULL);
+	//if (signal(SIGALRM, alarmGoesOff) == SIG_ERR) exit(-1);
 
-  // if (signal(SIGALRM, alarmGoesOff) == SIG_ERR) exit(-1);
-
-  // ask a number to the user
-
-  // if endTime is true, n will have a random value
-
-  // print the number read
+	alarm(TIME);
+		printf ("Write  a number (you have got %d seconds) \n",TIME );
+		scanf ("%d",&n);
+		if (endTime){
+			srand(time(0));
+			n = rand()%((nMax+1)-nMin) + nMin;
+			printf ("Time is up, the number will be %d\n",n );
+		}		
+		else {
+			printf ("number %d has been read\n",n );
+		}
+	exit(0);
+  
 
   exit(0);
 }
 
+/* ##############################*/
+/*                               */
+/* problem05                     */
+/*                               */
+/* ##############################*/
+
+#define ALARM_TIME 3
+
+void alarmGoesOff2(int signal) {
+
+	printf("Alarm %d \n", signal);
+ 
+} 
+
 int exercise05() {
 
-  // add an infinite loop
-
-  // add a custom handler for SIGALRM
-
-  // check if there is an error installing the handler
-
-  // set an alarm for ALARM_TIME seconds
-
-  // block the process until any signal is received
+for(;;){
+	if (signal(SIGALRM, alarmGoesOff2) == SIG_ERR) {
+		perror("Error while installing a SIGALRM handler.\n");
+		exit(-1);	
+	}
+	alarm(ALARM_TIME);           /* start the timer */ 
+	pause();            /* next caught signal wakes us up */ 
+	} 
 }
 
 int exercise06() {

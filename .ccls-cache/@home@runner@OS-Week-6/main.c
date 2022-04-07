@@ -1,3 +1,4 @@
+#include "week_06.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     
     if (pid2 == 0) {
         //close(STDIN_FILENO);
-        //dup(fd01]);
+        //dup(fd[0]);
         dup2(fd[0], STDIN_FILENO);
         close(fd[0]);
         close(fd[1]);
